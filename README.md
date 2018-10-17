@@ -36,7 +36,7 @@ There have been instances where temperature of a room inadvertently increased or
 An IoT based weather control station will help us in not only measuring the room temperature, but it’ll also measure altitude and pressure in the room. We can then configure alerts sent over web and also in the form of sound alarms with LED lights when temperature crosses a certain threshold.
 We can connect this raspberry pi device to cloud account to store weather data and then derive useful analytics from it.  
 
-### 4. Crime information and alert system
+### 4. Crime information system
 
 Our solution will aim to assist the users by informing them about the dangerous, crime-hot places in the city so that they can use alternate routes and avoid these places while travelling in the city at a particular time. The system will use the crime and demographic data as the input dataset.
 
