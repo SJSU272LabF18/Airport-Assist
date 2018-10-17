@@ -38,6 +38,7 @@ We can connect this raspberry pi device to cloud account to store weather data a
 
 ### 4. Crime information and alert system
 
-Our solution will aim to assist the users by informing them about the dangerous, crime-hot places in the city so that they can use alternate routes and avoid these places while travelling in the city. The system will use the crime and demographic data as the input dataset.
+Our solution will aim to assist the users by informing them about the dangerous, crime-hot places in the city so that they can use alternate routes and avoid these places while travelling in the city at a particular time. The system will use the crime and demographic data as the input dataset.
 
-The solution will potentially use Big Data analysis through Spark/HDFS and Node JS based web-client to process the incoming data-set, publish the analysis and alert the registered users as new crimes happen.
+The solution will use Big Data analysis to process the incoming data-set, and will identify and mark the roads according to the volume of crimes that have happened there enabling the users to make informed decisions about the travel routes they can take.
+
