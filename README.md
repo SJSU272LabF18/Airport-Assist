@@ -15,7 +15,7 @@ Cases of double ownership of land are common in many countries where gangs collu
 
 Blockchain would help by making all land records publicly available online and eliminate multiple titles for the same piece of land. Entries to these blockchains identifying the selling of a property would only be made by government officials, but the current ownership of land would be publicly available to everyone.
 
-### 2. Airport Assistant for Elders
+### 2. Airport Assistant for Elders  - APPROVED
 
  - Problem Statement
  
