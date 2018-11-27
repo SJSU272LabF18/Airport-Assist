@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech TTS;
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String AIRLINES = "airlines";
+    public static final String GATE = "gate";
+    public static final String DEPARTURE_TIME = "departTime";
+    public static final String TERMINAL = "terminal";
+    public static final String FLIGHT_NUMBER = "flightNumber";
+    SharedPreferences sharedpreferences;
 
 
 
@@ -46,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         TTS.initTTS(this);
 
@@ -144,6 +153,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String timetableSearchResults) {
             Log.d("hello4","task completed");
+            String Terminal="";
+            String Gate="";
+            String DepartTime="";
+            String Airline = "";
+            String Status="";
+            String flight_details = "";
+            String flight_number = "";
             String flight_details = "";
             if (timetableSearchResults != null && !timetableSearchResults.equals("")) {
                 try{
@@ -151,14 +167,19 @@ public class MainActivity extends AppCompatActivity {
                     for(int i =0;i<timetable.length();i++){
                         Log.d("HEy!", "onPostExecute: timetable retrieves, our flight is"+number);
                         JSONObject table = timetable.getJSONObject(i);
+                        Status = table.getString("status");
                         JSONObject flight = table.getJSONObject("flight");
-                        String flight_number = flight.getString("number");
+                        flight_number = flight.getString("number");
                         Log.d("HEy2 !", "onPostExecute: flight retrieved"+flight_number);
                         if(flight_number.equals(number)){
                             Log.d("HEy 3!", "onPostExecute: flight matched");
+                            JSONObject airline = table.getJSONObject("airline");
+                            Airline = airline.getString("name");
                             JSONObject departure = table.getJSONObject("departure");
-
-                            flight_details = "Terminal: "+departure.getString("terminal")+"\n Gate:"+departure.getString("gate")+"\n Time:"+departure.getString("scheduledTime");
+                            Terminal = departure.getString("terminal");
+                            Gate=departure.getString("gate");
+                            DepartTime=departure.getString("scheduledTime");
+                            flight_details +="Status: "+Status+ "\nTerminal: "+Terminal+" \n Gate:"+Gate+"\n Time:"+DepartTime;
                             break;
                         }else{
                             continue;
@@ -172,6 +193,14 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 flightDetails.setText("Error fetching results");
             }
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putString(AIRLINES,Airline);
+            editor.putString(GATE,Gate);
+            editor.putString(DEPARTURE_TIME,DepartTime);
+            editor.putString(TERMINAL,Terminal);
+            editor.putString(FLIGHT_NUMBER,flight_number);
+            editor.commit();
+
             mChatBox.setText("Would you like to begin navigation?");
             TTS.speak("Would you like to begin navigation?");
         }
