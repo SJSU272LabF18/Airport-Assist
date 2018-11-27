@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:ems="10"
+        android:id="@+id/flight_number"
+        android:inputType="number"
+        android:text="Enter your flight number"
+        android:textAlignment="center"
+        android:singleLine="true"
+        android:imeOptions="actionDone" />
+
+    <Button
+        android:id="@+id/getFlight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#23d8ca"
+        android:text="Get Details"
+        android:textColor="#45002d"
+        android:onClick="getDetails" />
+
+    <TextView
+        android:id="@+id/flight_details"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:ems="10"
+        android:text="Your Flight Details"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/bottom_text_box"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+
+            android:paddingLeft="35dp"
+            android:text=""
+            android:textSize="21sp" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_gravity="end"
+            android:layout_marginRight="16dp"
+            android:onClick="SpeechToText"
+            android:layout_marginBottom="65dp"
+            android:background="@drawable/oval"
+            android:foregroundGravity="right"
+            android:src="@drawable/ic_mic_black_24dp" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

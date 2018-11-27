@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "901924130890",
+    "firebase_url": "https://airportnavigationassistant.firebaseio.com",
+    "project_id": "airportnavigationassistant",
+    "storage_bucket": "airportnavigationassistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901924130890:android:8606b103c43ba543",
+        "android_client_info": {
+          "package_name": "com.example.caroline.airportnav"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901924130890-484n62i21h4i0319c1selnlsc377e9nt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoEaYXweufcfe3lIsDxLnnE6gBY3RoTrA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
