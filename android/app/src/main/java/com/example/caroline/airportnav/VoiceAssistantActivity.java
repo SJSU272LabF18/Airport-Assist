@@ -2,6 +2,7 @@ package com.example.caroline.airportnav;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -48,12 +49,21 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
     private MessageListAdapter mMessageAdapter;
     private List<Message> messageList = new ArrayList<>();
     protected LinearLayoutManager mLayoutManager;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String AIRLINES = "airlines";
+    public static final String GATE = "gate";
+    public static final String DEPARTURE_TIME = "departTime";
+    public static final String TERMINAL = "terminal";
+    public static final String FLIGHT_NUMBER = "flightNumber";
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voice_assistant);
 
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        
         resultTextView = (TextView) findViewById(R.id.resultTextView);
         aiButton = (AIButton) findViewById(R.id.imageButton);
 
@@ -92,6 +102,9 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mMessageRecycler.setLayoutManager(mLayoutManager);
         mMessageRecycler.setAdapter(mMessageAdapter);
+        
+        String sessionData = sharedpreferences.getString(GATE,"defaultGate");
+        resultTextView.setText(sessionData);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
