@@ -1,7 +1,9 @@
 package com.example.caroline.airportnav;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import android.speech.RecognizerIntent;
