@@ -31,7 +31,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     final static String AVIATION_API_URL =
-            "http://aviation-edge.com/v2/public/timetable?key=010944-6f4529&iataCode=SFO&type=departure";
+            "http://aviation-edge.com/v2/public/timetable?key=&iataCode=SFO&type=departure";
 
 
     public static URL buildUrlForTimeTable() {
