@@ -419,7 +419,7 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         String sensor = "sensor=false";
         //mode for direction
         String mode = "mode=walking";
-        String key = "AIzaSyDc72Tfi2iEzvNIYoSzmSTz6a4YeT_p_wU";
+        String key = "";
         String param = string_org + "&"+ string_dest + "&" + sensor + "&" + mode + "&key="+key;
         String output= "json";
         String url = "https://maps.googleapis.com/maps/api/directions/" + output +"?"+ param;
