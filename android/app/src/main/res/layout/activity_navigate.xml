@@ -9,6 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#FFF9E4"
     tools:context=".FLightNumberActivity">
 
     <ProgressBar
@@ -30,9 +31,12 @@
     <EditText
         android:id="@+id/navigationDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="Navigation Instructions" />
+        android:text="Navigation Instructions"
+        android:textAlignment="center"
+        android:textSize="25dp"
+        android:background="@drawable/text_area_details"
+        android:layout_height="300dp"/>
 
 </LinearLayout>
