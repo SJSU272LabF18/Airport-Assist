@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         TTS.initTTS(this);
@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*APN: Starting navigation directly for testing
+        For Testing
+        startNavigationActivity(); */
 
     }
     public void getDetails(View view) {
@@ -162,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
             String Status="";
             String flight_details = "";
             String flight_number = "";
-            String flight_details = "";
             if (timetableSearchResults != null && !timetableSearchResults.equals("")) {
                 try{
                     JSONArray timetable = new JSONArray(timetableSearchResults);
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
+
                 flightDetails.setText(flight_details);
             } else {
                 flightDetails.setText("Error fetching results");
