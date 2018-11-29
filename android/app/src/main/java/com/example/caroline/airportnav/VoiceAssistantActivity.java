@@ -15,8 +15,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,10 +65,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import Modules.Route;
 import ai.api.android.AIConfiguration;
@@ -83,7 +93,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class VoiceAssistantActivity extends AppCompatActivity implements AIButton.AIButtonListener,OnMapReadyCallback, DirectionFinderListener  {
+public class VoiceAssistantActivity extends AppCompatActivity implements AIButton.AIButtonListener,OnMapReadyCallback, DirectionFinderListener {
 
     public static final String TAG = VoiceAssistantActivity.class.getName();
 
@@ -103,6 +113,9 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
     public static final String TERMINAL = "terminal";
     public static final String FLIGHT_NUMBER = "flightNumber";
     SharedPreferences sharedpreferences;
+    private CountDownTimer countDownTimer;
+    private static final String FORMAT = "%02d:%02d:%02d";
+
     /******************************maps*************************************/
 
     private GoogleMap mMap;
@@ -125,12 +138,14 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
     private String currentAction = null;
     private String locString = null;
     private String destString = null;
-    private static final String CHECK_IN = "checkin";
-    private static final String SECURITY_CHECK = "security_check";
-    private static final String BOARDING = "boarding";
+    private static final String CHECK_IN = "Nav_To_Checkin";
+    private static final String SECURITY_CHECK = "Nav_To_SC";
+    private static final String BOARDING = "Nav_To_Gate";
 
 
     /******************************navigate end*******************************/
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,16 +153,16 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-        /* APN: Temporary hardcoding shared preferences
-           For testing
+                /* APN: Temporary hardcoding shared preferences
+            For testing
 
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString(AIRLINES,"Delta Air Lines");
-        editor.putString(GATE,"40");
-        editor.putString(DEPARTURE_TIME,"2018-11-29T06:00:00.000");
-        editor.putString(TERMINAL,"1");
-        editor.putString(FLIGHT_NUMBER,"1210");
-        editor.commit();*/
+         SharedPreferences.Editor editor = sharedpreferences.edit();
+         editor.putString(AIRLINES,"Delta Air Lines");
+         editor.putString(GATE,"40");
+         editor.putString(DEPARTURE_TIME,"2018-11-29T06:00:00.000");
+         editor.putString(TERMINAL,"1");
+         editor.putString(FLIGHT_NUMBER,"1210");
+         editor.commit();*/
 
         /***********************************from maps******************************/
 
@@ -210,10 +225,58 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mMessageRecycler.setLayoutManager(mLayoutManager);
         mMessageRecycler.setAdapter(mMessageAdapter);
-        
+
         String sessionData = sharedpreferences.getString(GATE,"defaultGate");
-        resultTextView.setText(sessionData);
+
+
+        setTimer();
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setTimer() {
+        LocalDateTime d1 = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        Log.d("Timer NOW:",d1.toString());
+        LocalDateTime d2 = LocalDateTime.parse(sharedpreferences.getString(DEPARTURE_TIME, ""),DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+        Log.d("Timer Flight",d2.toString());
+        long days = d1.until(d2, ChronoUnit.DAYS);
+        Log.d("Timer",Long.toString(days));
+        d1 = d1.plusDays(days);
+        long hours = d1.until(d2, ChronoUnit.HOURS);
+        d1 = d1.plusHours(hours);
+        Log.d("Timer",Long.toString(hours));
+        long minutes = d1.until(d2, ChronoUnit.MINUTES);
+        d1 = d1.plusMinutes(minutes);
+        Log.d("Timer",Long.toString(minutes));
+        final long seconds = d1.until(d2, ChronoUnit.SECONDS);
+
+
+        long timeLeft = hours*3600000+minutes*60000;
+        Log.d("Timer",Long.toString(timeLeft));
+        countDownTimer = new CountDownTimer(timeLeft,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                String displayText ="Your flight departs in :"+String.format(FORMAT,
+                        TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
+                                TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
+                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
+                resultTextView.setText(displayText);
+
+            }
+
+            @Override
+            public void onFinish() {
+                resultTextView.setText("Flight has departed");
+            }
+        };
+        countDownTimer.start();
+
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -240,27 +303,34 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         //String text = "Query:" + result.getResolvedQuery() + "\n Action: " + result.getAction() + "\n Parameters: " + parameterString;
         String Query = result.getResolvedQuery();
         String action = "";
-        if(result!= null && result.getContexts() != null && result.getContexts().get(0)!=null) {
-            Map<String, JsonElement> context = result.getContexts().get(0).getParameters();
-            if (context.containsKey("action")) {
-                action = context.get("action").toString();
+        if(result!= null && result.getContexts() != null) {
+            if(result.getContexts().size()>0 && result.getContexts().get(0)!=null) {
+                Map<String, JsonElement> context = result.getContexts().get(0).getParameters();
+                if (context.containsKey("action")) {
+                    action = context.get("action").toString();
+                }
+
+                action=action.replace("\"","");
+                Log.d("ActionName",action);
+                //change this code to display the map based on action
+                /* APN:
+                 To add below code to replot map based on action*/
+                 currentAction=action;
+                 getCurrentLocation();
+                 drawMap();
+
             }
-            resultTextView.setText(action);
-
-            /* APN:
-                To add below code to replot map based on action
-                currentAction=action;
-                getCurrentLocation();
-                drawMap();
-            */
         }
-
-        String speech = response.getResult().getFulfillment().getSpeech();
-        messageList.add(new Message(Query,"User"));
-        messageList.add(new Message(speech,"Agent"));
-        mMessageAdapter.notifyDataSetChanged();
-        mMessageRecycler.scrollToPosition(mMessageAdapter.getItemCount() - 1);
-        TextToSpeech.speak(speech);
+        if(response.getResult().getFulfillment().getSpeech()!=null) {
+            String speech = response.getResult().getFulfillment().getSpeech();
+            messageList.add(new Message(Query, "User"));
+            messageList.add(new Message(speech, "Agent"));
+            mMessageAdapter.notifyDataSetChanged();
+            mMessageRecycler.scrollToPosition(mMessageAdapter.getItemCount() - 1);
+            TextToSpeech.speak(speech);
+        }else{
+            TextToSpeech.speak("Thank you for using Airport Navigation!");
+        }
 
 
     }
@@ -386,6 +456,11 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        countDownTimer.cancel();
+    }
     /********************************************Maps functions**********************************************/
     /**
      * Manipulates the map once available.
@@ -419,7 +494,7 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         String sensor = "sensor=false";
         //mode for direction
         String mode = "mode=walking";
-        String key = "";
+        String key = "AIzaSyDc72Tfi2iEzvNIYoSzmSTz6a4YeT_p_wU";
         String param = string_org + "&"+ string_dest + "&" + sensor + "&" + mode + "&key="+key;
         String output= "json";
         String url = "https://maps.googleapis.com/maps/api/directions/" + output +"?"+ param;
@@ -597,7 +672,7 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
 
         }
     }
-/*MapsActivity end******************************************************************************************************/
+    /*MapsActivity end******************************************************************************************************/
 
     /*****************************************************navigate*************************************************/
 
@@ -683,11 +758,11 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         String[] coordinates = locString.split(",");
         LatLng origin = new LatLng(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]) );
 
-        /*APN
-          Hardcoding currentAction
-          For testing
+         /*APN
+           Hardcoding currentAction
+           For testing
 
-        currentAction = BOARDING; */
+         currentAction = BOARDING; */
 
         if(currentAction == null) return;
         String address = "Terminal " +sharedpreferences.getString(TERMINAL,"1") +", San Francisco International Airport ";
@@ -731,41 +806,41 @@ public class VoiceAssistantActivity extends AppCompatActivity implements AIButto
         String address = "Terminal+" +sharedpreferences.getString(TERMINAL,"1") +",+San+Francisco+International+Airport";
         if(currentAction.equals(CHECK_IN)){
             //destination is airline name
-           // address += "+"+sharedpreferences.getString(AIRLINES,"airlines");
+            // address += "+"+sharedpreferences.getString(AIRLINES,"airlines");
         } else if(currentAction.equals(BOARDING)){
             //destination is gate
             address += "+Gate+" + sharedpreferences.getString(GATE,"1");
         } else if(currentAction.equals(SECURITY_CHECK)){
             //APN: to do
         } else {
-            /*APN
-             Pop up that action is not set or something
-             */
+             /*APN
+              Pop up that action is not set or something
+              */
             return;
         }
-            String uri = "google.navigation:q="+address+"&mode=w";
-            Log.d("APN", "the uri: "+uri);
-            Uri gmmIntentUri = Uri.parse(uri);
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            mapIntent.setPackage("com.google.android.apps.maps");
-            startActivity(mapIntent);
+        String uri = "google.navigation:q="+address+"&mode=w";
+        Log.d("APN", "the uri: "+uri);
+        Uri gmmIntentUri = Uri.parse(uri);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
-    /* APN: currently, openMaps is not used
-    protected void openMaps(){
-        if(getCurrentLocation()) {
-            // Create a Uri from an intent string. Use the result to create an Intent.
-            Uri gmmIntentUri = Uri.parse("google.streetview:cbll="+locString);
+     /* APN: currently, openMaps is not used
+     protected void openMaps(){
+         if(getCurrentLocation()) {
+             // Create a Uri from an intent string. Use the result to create an Intent.
+             Uri gmmIntentUri = Uri.parse("google.streetview:cbll="+locString);
 
-            // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            // Make the Intent explicit by setting the Google Maps package
-            mapIntent.setPackage("com.google.android.apps.maps");
+             // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+             // Make the Intent explicit by setting the Google Maps package
+             mapIntent.setPackage("com.google.android.apps.maps");
 
-            // Attempt to start an activity that can handle the Intent
-            startActivity(mapIntent);
-        }
-    }*/
+             // Attempt to start an activity that can handle the Intent
+             startActivity(mapIntent);
+         }
+     }*/
 
     public boolean convertAddressToCoordinates(String strAddress, Context ctx)
     {
