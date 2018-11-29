@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -29,6 +30,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -48,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String TERMINAL = "terminal";
     public static final String FLIGHT_NUMBER = "flightNumber";
     SharedPreferences sharedpreferences;
+    private TextView mTerminal;
+    private TextView mGate;
+    private TextView mDepartTime;
+
 
 
 
@@ -62,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
         flightNumber = (EditText) findViewById(R.id.flight_number);
         flightDetails = (TextView) findViewById(R.id.flight_details);
+        mTerminal = (TextView) findViewById(R.id.terminal);
+        mGate = findViewById(R.id.gate);
+        mDepartTime = findViewById(R.id.departTime);
         mChatBox = (TextView) findViewById(R.id.bottom_text_box);
         btnSpeak = (ImageButton) findViewById(R.id.imageButton);
         flightNumber.setOnEditorActionListener(new OnEditorActionListener() {
@@ -76,9 +87,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*APN: Starting navigation directly for testing
-        For Testing
-        startNavigationActivity(); */
 
     }
     public void getDetails(View view) {
@@ -177,12 +185,23 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("HEy2 !", "onPostExecute: flight retrieved"+flight_number);
                         if(flight_number.equals(number)){
                             Log.d("HEy 3!", "onPostExecute: flight matched");
-                            JSONObject airline = table.getJSONObject("airline");
-                            Airline = airline.getString("name");
-                            JSONObject departure = table.getJSONObject("departure");
-                            Terminal = departure.getString("terminal");
-                            Gate=departure.getString("gate");
-                            DepartTime=departure.getString("scheduledTime");
+                            Log.d("HEy 4!",table.toString());
+                            if(table.getJSONObject("airline")!=null) {
+                                JSONObject airline = table.getJSONObject("airline");
+                                Airline = airline.getString("name");
+                            }
+                            if(table.getJSONObject("departure")!=null) {
+                                JSONObject departure = table.getJSONObject("departure");
+                                if (departure.getString("terminal") != null) {
+                                    Terminal = departure.getString("terminal");
+                                }
+                                if (departure.getString("gate") != null) {
+                                    Gate = departure.getString("gate");
+                                }
+                                if (departure.getString("scheduledTime") != null) {
+                                    DepartTime = departure.getString("scheduledTime");
+                                }
+                            }
                             flight_details +="Status: "+Status+ "\nTerminal: "+Terminal+" \n Gate:"+Gate+"\n Time:"+DepartTime;
                             break;
                         }else{
@@ -193,8 +212,15 @@ public class MainActivity extends AppCompatActivity {
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
-
-                flightDetails.setText(flight_details);
+                mTerminal.setText(Terminal);
+                mGate.setText(Gate);
+                try {
+                    LocalDateTime d2 = LocalDateTime.parse(DepartTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+                    mDepartTime.setText(d2.format(DateTimeFormatter.ofPattern("hh:mm a")));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                //flightDetails.setText(flight_details);
             } else {
                 flightDetails.setText("Error fetching results");
             }
@@ -206,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString(FLIGHT_NUMBER,flight_number);
             editor.commit();
 
-            mChatBox.setText("Would you like to begin navigation?");
+            mChatBox.setText("Begin navigation?");
             TTS.speak("Would you like to begin navigation?");
         }
 
