@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech TTS;
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
     public static final String AIRLINES = "airlines";
     public static final String GATE = "gate";
     public static final String DEPARTURE_TIME = "departTime";
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView mGate;
     private TextView mDepartTime;
 
-
-
-
+    /**
+     * Fetches the first view of app.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         flightNumber.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId==EditorInfo.IME_ACTION_DONE){
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     number = v.getText().toString();
                     getFlightDetails(number);
                     flightDetails.setVisibility(View.VISIBLE);
@@ -87,30 +87,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
     public void getDetails(View view) {
         number = flightNumber.getText().toString();
-        Log.d("hello","Button clicked "+number);
+        Log.d("hello", "Button clicked " + number);
         URL timetableURL = NetworkUtils.buildUrlForTimeTable();
         new FetchTimeTableTask().execute(timetableURL);
 
     }
-    public void SpeechToText(View view){
+
+    public void SpeechToText(View view) {
         promptSpeechInput();
     }
 
     private void promptSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.speech_not_supported), Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
@@ -118,19 +117,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
-                if (resultCode == RESULT_OK && null != data) {
+        case REQ_CODE_SPEECH_INPUT: {
+            if (resultCode == RESULT_OK && null != data) {
 
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    if(result!=null & result.get(0).equalsIgnoreCase("yes")){
-                        startNavigationActivity();
-                    }
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (result != null & result.get(0).equalsIgnoreCase("yes")) {
+                    startNavigationActivity();
                 }
-                break;
             }
+            break;
+        }
         }
     }
+
+    /**
+     * Redirects to navigation. Since google API only allows their users to use
+     * navigation within Google Maps app, we'll have to redirect to that api using
+     * the starting and destination point
+     */
 
     private void startNavigationActivity() {
         Intent intent = new Intent(this, VoiceAssistantActivity.class);
@@ -165,32 +169,32 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String timetableSearchResults) {
-            Log.d("hello4","task completed");
-            String Terminal="";
-            String Gate="";
-            String DepartTime="";
+            Log.d("hello4", "task completed");
+            String Terminal = "";
+            String Gate = "";
+            String DepartTime = "";
             String Airline = "";
-            String Status="";
+            String Status = "";
             String flight_details = "";
             String flight_number = "";
             if (timetableSearchResults != null && !timetableSearchResults.equals("")) {
-                try{
+                try {
                     JSONArray timetable = new JSONArray(timetableSearchResults);
-                    for(int i =0;i<timetable.length();i++){
-                        Log.d("HEy!", "onPostExecute: timetable retrieves, our flight is"+number);
+                    for (int i = 0; i < timetable.length(); i++) {
+                        Log.d("HEy!", "onPostExecute: timetable retrieves, our flight is" + number);
                         JSONObject table = timetable.getJSONObject(i);
                         Status = table.getString("status");
                         JSONObject flight = table.getJSONObject("flight");
                         flight_number = flight.getString("number");
-                        Log.d("HEy2 !", "onPostExecute: flight retrieved"+flight_number);
-                        if(flight_number.equals(number)){
+                        Log.d("HEy2 !", "onPostExecute: flight retrieved" + flight_number);
+                        if (flight_number.equals(number)) {
                             Log.d("HEy 3!", "onPostExecute: flight matched");
-                            Log.d("HEy 4!",table.toString());
-                            if(table.getJSONObject("airline")!=null) {
+                            Log.d("HEy 4!", table.toString());
+                            if (table.getJSONObject("airline") != null) {
                                 JSONObject airline = table.getJSONObject("airline");
                                 Airline = airline.getString("name");
                             }
-                            if(table.getJSONObject("departure")!=null) {
+                            if (table.getJSONObject("departure") != null) {
                                 JSONObject departure = table.getJSONObject("departure");
                                 if (departure.getString("terminal") != null) {
                                     Terminal = departure.getString("terminal");
@@ -202,34 +206,36 @@ public class MainActivity extends AppCompatActivity {
                                     DepartTime = departure.getString("scheduledTime");
                                 }
                             }
-                            flight_details +="Status: "+Status+ "\nTerminal: "+Terminal+" \n Gate:"+Gate+"\n Time:"+DepartTime;
+                            flight_details += "Status: " + Status + "\nTerminal: " + Terminal + " \n Gate:" + Gate
+                                    + "\n Time:" + DepartTime;
                             break;
-                        }else{
+                        } else {
                             continue;
                         }
 
                     }
-                }catch(JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 mTerminal.setText(Terminal);
                 mGate.setText(Gate);
                 try {
-                    LocalDateTime d2 = LocalDateTime.parse(DepartTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+                    LocalDateTime d2 = LocalDateTime.parse(DepartTime,
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
                     mDepartTime.setText(d2.format(DateTimeFormatter.ofPattern("hh:mm a")));
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //flightDetails.setText(flight_details);
+                // flightDetails.setText(flight_details);
             } else {
                 flightDetails.setText("Error fetching results");
             }
             SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString(AIRLINES,Airline);
-            editor.putString(GATE,Gate);
-            editor.putString(DEPARTURE_TIME,DepartTime);
-            editor.putString(TERMINAL,Terminal);
-            editor.putString(FLIGHT_NUMBER,flight_number);
+            editor.putString(AIRLINES, Airline);
+            editor.putString(GATE, Gate);
+            editor.putString(DEPARTURE_TIME, DepartTime);
+            editor.putString(TERMINAL, Terminal);
+            editor.putString(FLIGHT_NUMBER, flight_number);
             editor.commit();
 
             mChatBox.setText("Begin navigation?");
