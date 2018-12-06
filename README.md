@@ -17,5 +17,8 @@ Air travel is an exciting experience for some. For others, it is a way of life. 
  
 Imagine a person guiding seniors through the airport to boarding. From reminding what documents to carry, providing tips regarding the security check protocols, real time gate information for their flights and any change in gate and flight times. We propose to build a voice assistant to guide seniors every step of the way for air travel.  
 
-
-
+ - Tech Stack
+ 
+The Android application uses Google Dataflow to process speech input and recognize the intent associated with the input.
+The application also use api.ai SDK to communicate with DataFlow and translate between API.AI request/response and API call.
+A NodeJS server is used as a webhook to help Google DataFlow.
