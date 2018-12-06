@@ -4,75 +4,210 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="@drawable/background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
-    android:background="#FFF9E4">
+
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/flight_number"
+            android:layout_width="270dp"
+            android:layout_height="80dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/flight_blackbox"
+            android:ems="10"
+            android:hint="Flight Number"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:paddingLeft="60dp"
+            android:selectAllOnFocus="true"
+            android:textAlignment="center"
+            android:textColor="@color/aidialog_background"
+            android:textColorHint="@color/aidialog_background"
+            android:textSize="25dp" />
+
+        <ImageView
+            android:id="@+id/inside_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/flight_number"
+            android:layout_alignTop="@id/flight_number"
+            android:layout_alignBottom="@id/flight_number"
+            android:layout_marginLeft="17dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:src="@drawable/pastedimage"/>
+        <Button
+            android:id="@+id/getFlight"
+            android:layout_marginTop="20dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:backgroundTint="#23d8ca"
+            android:onClick="getDetails"
+            android:text="GO"
+            android:textColor="#45002d"
+            android:layout_alignParentRight="true"
+            android:textSize="25dp" />
+
+    </RelativeLayout>
 
 
-    <EditText
-        android:id="@+id/flight_number"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:ems="10"
-        android:imeOptions="actionDone"
-        android:inputType="number"
-        android:singleLine="true"
-        android:background="@drawable/edit_text_home_page"
-        android:text="Enter your flight number"
-        android:paddingLeft="60dp"
-        android:textAlignment="center"
-        android:textSize="25dp"/>
 
-    <Button
-        android:id="@+id/getFlight"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:backgroundTint="#23d8ca"
-        android:text="Get   Details"
-        android:textColor="#45002d"
-        android:onClick="getDetails"
-        android:textSize="25dp" />
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="30dp">
 
-    <TextView
-        android:id="@+id/flight_details"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:ems="10"
-        android:text="Your Flight Details"
-        android:textAlignment="center"
-        android:textSize="25dp"
-        android:background="@drawable/text_area_details"/>
+
+        <TextView
+            android:id="@+id/flight_details"
+            android:layout_width="350dp"
+            android:layout_height="300dp"
+            android:background="@drawable/flightstatus"
+            android:ems="10"
+            android:text="Your Flight Details"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+        <TableLayout
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:paddingTop="90dp"
+            android:stretchColumns="1">
+
+
+            <TableRow>
+
+                <TextView
+                    android:padding="3dip"
+                    android:text="Terminal"
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+
+                <TextView
+
+                    android:id="@+id/terminal"
+                    android:padding="3dip"
+                    android:text=""
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+            </TableRow>
+            <TableRow android:layout_height="1px" android:background="#BDBDBD">
+                <TextView android:layout_span="2" android:layout_height="4px"
+                    android:layout_width="fill_parent" android:text="">
+                </TextView>
+            </TableRow>
+
+
+            <TableRow>
+
+                <TextView
+                    android:padding="3dip"
+                    android:text="Gate Number"
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+
+                <TextView
+
+                    android:id="@+id/gate"
+                    android:padding="3dip"
+                    android:text=""
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+            </TableRow>
+
+            <TableRow android:layout_height="1px" android:background="#BDBDBD">
+                <TextView android:layout_span="2" android:layout_height="2px"
+                    android:layout_width="fill_parent" android:text="">
+                </TextView>
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:padding="3dip"
+                    android:text="Departure Time"
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+
+                <TextView
+
+                    android:id="@+id/departTime"
+                    android:padding="3dip"
+                    android:text=""
+                    android:textColor="@color/aidialog_background"
+                    android:textSize="25dp" />
+            </TableRow>
+            <TableRow android:layout_height="1px" android:background="#BDBDBD">
+                <TextView android:layout_span="2" android:layout_height="4px"
+                    android:layout_width="fill_parent" android:text="">
+                </TextView>
+            </TableRow>
+
+        </TableLayout>
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/sanfrancisco" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="106dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        >
 
-        <TextView
-            android:id="@+id/bottom_text_box"
-            android:layout_width="285dp"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="35dp"
-            android:text=""
-            android:textSize="21sp" />
+            android:layout_gravity="bottom">
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_gravity="end"
-            android:layout_marginRight="16dp"
-            android:onClick="SpeechToText"
-            android:layout_marginBottom="65dp"
-            android:background="@drawable/oval"
-            android:foregroundGravity="right"
-            android:src="@drawable/ic_mic_black_24dp" />
+            <TextView
+                android:id="@+id/bottom_text_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="30dp"
+
+                android:background="@drawable/beginnavigation"
+                android:elegantTextHeight="true"
+                android:paddingLeft="35dp"
+                android:text=""
+                android:textColor="@color/aidialog_background"
+                android:textSize="21sp" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignTop="@id/bottom_text_box"
+                android:layout_alignRight="@id/bottom_text_box"
+                android:layout_gravity="end"
+
+                android:layout_marginRight="14dp"
+
+                android:background="@drawable/oval"
+                android:foregroundGravity="right"
+                android:onClick="SpeechToText"
+                android:src="@drawable/mymic" />
+
+        </RelativeLayout>
 
 
     </LinearLayout>
